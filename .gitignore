@@ -1,3 +1,16 @@
-# https://dart.dev/guides/libraries/private-files
-# Created by `dart pub`
+# Dependency directories
 .dart_tool/
+.packages
+.pub-cache/
+.pub/
+
+# Build artifacts
+build/
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+
+# OS files
+.DS_Store

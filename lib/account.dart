@@ -155,7 +155,7 @@ void printSummary(List<Map<String, dynamic>> ledgerEntryList) {
   // 총 수입, 총 지출, 잔액 계산 및 출력
   // 총 수입은 리스트 안의 amount값들을 더하고, 지출은 빼서 최종 잔액을 계산
   int totalIncome = 0;
-  int totalExpence = 0;
+  int totalExpense = 0;
 
   for (var entry in ledgerEntryList) {
     if (entry['type'] == '수입') {
@@ -163,9 +163,11 @@ void printSummary(List<Map<String, dynamic>> ledgerEntryList) {
       int amount = entry['amount'];
       totalIncome += amount;
     } else if (entry['type'] == '지출') {
-      totalExpence += entry['amount'] as int;
+      totalExpense += entry['amount'] as int;
     }
   }
+  final fianalTotal = totalIncome - totalExpense;
+  print('총 수입: $totalIncome원\n총 지출: $totalExpense\n잔액: $fianalTotal');
 }
 
 // 카테고리별 지출 합계 출력 함수

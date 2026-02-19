@@ -703,3 +703,214 @@ books 리스트 중에서 isAvailable이 false인 책들만 찾아 출력합니�
 Boolean 상태 변경: true를 false로 바꾸는 연습은 ToDo 앱의 isDone 필드를 다루는 것과 100% 일치합니다.
 
 데이터 필터링: 전체 목록 중 특정 조건(isAvailable == false)만 골라내는 법을 배우면, ToDo 앱에서 "완료된 일만 보기" 기능을 쉽게 만들 수 있습니다.
+
+
+***
+
+
+import 'dart:io';
+
+void main() {
+  /// ===============================
+  /// 🎬 영화 목록 초기 데이터 세팅
+  /// ===============================
+  final List<Map<String, dynamic>> movies = [
+    {'id': 1, 'title': '인터스텔라', 'price': 12000, 'availableSeats': 20},
+    {'id': 2, 'title': '듄', 'price': 14000, 'availableSeats': 10},
+    {'id': 3, 'title': '범죄도시', 'price': 11000, 'availableSeats': 15},
+    {'id': 4, 'title': '아바타', 'price': 15000, 'availableSeats': 8},
+  ];
+
+  /// 예매 바구니
+  List<Map<String, dynamic>> cartList = [];
+
+  runMovieKioskProgram(movies, cartList);
+}
+
+/// ===============================
+/// 🎟️ 프로그램 전체 루프
+/// ===============================
+void runMovieKioskProgram(
+  List<Map<String, dynamic>> movies,
+  List<Map<String, dynamic>> cartList,
+) {
+  while (true) {
+    print('\n========== 🎟️ MOVIE KIOSK ==========');
+    print('1. 영화 목록 보기');
+    print('2. 예매 담기');
+    print('3. 예매 목록 보기 및 수량 변경/취소');
+    print('4. 결제하기');
+    print('0. 종료');
+    print('=====================================');
+
+    int? input = int.tryParse(stdin.readLineSync() ?? '');
+
+    switch (input) {
+      case 1:
+        printMovieList(movies);
+        break;
+      case 2:
+        addToCart(movies, cartList);
+        break;
+      case 3:
+        showCart(movies, cartList);
+        break;
+      case 4:
+        processPayment(movies, cartList);
+        break;
+      case 0:
+        print('프로그램을 종료합니다.');
+        return;
+      default:
+        print('잘못된 입력입니다.');
+    }
+  }
+}
+
+/// ===============================
+/// 🔢 안전한 숫자 입력 함수
+/// ===============================
+int readIntInput(String prompt) {
+  while (true) {
+    stdout.write('$prompt: ');
+    String input = stdin.readLineSync() ?? '';
+    int? value = int.tryParse(input);
+
+    if (value != null) {
+      return value;
+    }
+
+    print('숫자를 다시 입력해주세요.');
+  }
+}
+
+/// ===============================
+/// 🎬 영화 목록 출력
+/// ===============================
+void printMovieList(List<Map<String, dynamic>> movies) {
+  print('\n[영화 목록]');
+  // TODO:
+  // movies를 순회하면서
+  // id / title / price / availableSeats 출력하세요.
+  //
+  // 예:
+  // 1번: 인터스텔라 | 12000원 | 남은좌석 20석
+}
+
+/// ===============================
+/// 🛒 예매 담기
+/// ===============================
+void addToCart(
+  List<Map<String, dynamic>> movies,
+  List<Map<String, dynamic>> cartList,
+) {
+  print('\n[예매 담기]');
+
+  int movieId = readIntInput('예매할 영화 번호를 입력하세요');
+  int ticketCount = readIntInput('예매할 매수를 입력하세요');
+
+  // TODO 1:
+  // movieId에 해당하는 영화가 실제로 존재하는지 확인하세요.
+  // 없다면 안내 후 return
+
+  // TODO 2:
+  // ticketCount는 1 이상만 허용하세요.
+
+  // TODO 3:
+  // 이미 cartList에 같은 영화가 있는지 확인하세요.
+  // 있다면 기존 count에 누적하세요.
+
+  // TODO 4:
+  // 남은 좌석(availableSeats)을 초과하지 못하도록 하세요.
+  // (이미 담긴 수량 + 새 요청 수량 <= availableSeats)
+
+  // TODO 5:
+  // cartList에 추가 또는 수정 후 안내 문구 출력
+}
+
+/// ===============================
+/// 📋 예매 목록 보기 및 수정/취소
+/// ===============================
+void showCart(
+  List<Map<String, dynamic>> movies,
+  List<Map<String, dynamic>> cartList,
+) {
+  if (cartList.isEmpty) {
+    print('예매된 항목이 없습니다.');
+    return;
+  }
+
+  print('\n[예매 목록]');
+  // TODO:
+  // cartList를 순회하며
+  // 번호 / 제목 / 가격 / 수량 / 소계 출력
+
+  stdout.write('수량을 변경하시겠습니까? (y/n): ');
+  String input = stdin.readLineSync()?.toLowerCase() ?? '';
+
+  if (input == 'y') {
+    int itemNumber = readIntInput('변경할 항목 번호를 입력하세요');
+    int newCount = readIntInput('새로운 수량 입력 (0 입력 시 삭제)');
+
+    // TODO 1:
+    // itemNumber가 범위 안에 있는지 확인
+
+    // TODO 2:
+    // newCount == 0 이면 해당 항목 삭제
+
+    // TODO 3:
+    // 1 이상이면 수량 변경
+    // 단, 남은 좌석 초과 금지
+  } else if (input == 'n') {
+    return;
+  } else {
+    print('잘못된 입력입니다.');
+  }
+}
+
+/// ===============================
+/// 💳 결제하기
+/// ===============================
+void processPayment(
+  List<Map<String, dynamic>> movies,
+  List<Map<String, dynamic>> cartList,
+) {
+  if (cartList.isEmpty) {
+    print('결제할 항목이 없습니다.');
+    return;
+  }
+
+  print('\n[결제 진행]');
+
+  int total = 0;
+
+  // TODO 1:
+  // 반복문으로 총 금액 계산
+
+  print('총 금액: $total원');
+
+  // TODO 2:
+  // 할인 정책 적용
+  //
+  // 50000원 이상 → 10%
+  // 30000원 이상 → 5%
+  // 그 외 → 할인 없음
+  //
+  // 할인 후 최종 금액 출력
+
+  stdout.write('결제하시겠습니까? (y/n): ');
+  String confirm = stdin.readLineSync()?.toLowerCase() ?? '';
+
+  if (confirm == 'y') {
+    // TODO 3:
+    // movies의 availableSeats를 cartList 수량만큼 차감
+
+    // TODO 4:
+    // 결제 완료 메시지 출력
+
+    // TODO 5:
+    // cartList.clear()
+  } else {
+    print('결제가 취소되었습니다.');
+  }
+}
