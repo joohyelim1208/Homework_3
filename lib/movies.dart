@@ -121,7 +121,7 @@ void addToCart(
   int existItem = cartList.indexWhere(
     (item) => item['id'] == selectMovie!['id'],
   );
-  // 조건에 맞는 요소의 인덱스를 반환하고 없으면 -1 반환. 삼항연산자 사용
+  // 조건에 맞는 요소의 인덱스를 반환하고 없으면 -1 반환. 리스트의 인덱스 시작 번호는 0이기 때문. 삼항연산자 사용
   // 이미 카트에 있는 경우
   int currentInCart = (existItem != -1) ? cartList[existItem]['count'] : 0;
   int totalCount = currentInCart + ticketCount;
@@ -130,8 +130,10 @@ void addToCart(
   // 남은 좌석(availableSeats)을 초과하지 못하도록 하세요.
   // (이미 담긴 수량 + 새 요청 수량 <= availableSeats)
   if (totalCount > selectMovie['availableSeats']) {
+    // ! (남은 좌석수 부분 출력을 제대로 수정함)
+    var leftSeats = selectMovie['availableSeats'] - currentInCart;
     print('잔여 좌석수를 초과했습니다.');
-    print('남은 좌석 수: ${selectMovie['availableSeats']} - $currentInCart');
+    print('남은 좌석 수: $leftSeats');
     return;
   }
 
@@ -170,7 +172,9 @@ void showCart(
   for (var i = 0; i < cartList.length; i++) {
     var item = cartList[i];
     print(
-      '${item['id']}번: ${item['title']} | 가격: ${item['price']} | 선택 좌석수: ${item['availableSeats']}',
+      // ! (위에서 카트리스트에 추가한 부분은 availableSeats이 아니라 count여서 수정을 해주었다.)원본 데이터 구조와 내가 만든 데이터 구조를 혼동함
+      // class를 사용해서 이름을 고정하지만 Map에서는 어떤 이름을 썼는지 확인하는 습관이 중요
+      '${item['id']}번: ${item['title']} | 가격: ${item['price']} | 선택 좌석수: ${item['count']}',
     );
 
     stdout.write('수량을 변경하시겠습니까? (y/n): ');
@@ -182,20 +186,30 @@ void showCart(
       int index = itemNumber - 1;
 
       // itemNumber가 범위 안에 있는지 확인
-      if (index > 0 && index < cartList.length) {
+      if (index >= 0 && index < cartList.length) {
         int newCount = readIntInput('새로운 수량 입력 (0 입력 시 삭제)');
         // newCount == 0 이면 해당 항목 삭제
         if (newCount <= 0) {
           print('${cartList[index]['title']} 항목이 삭제되었습니다.');
           cartList.removeAt(index);
         } else {
-          // 1 이상이면 새로운 항목 추가해주기
-          cartList[index]['count'] = newCount;
-          print('수량이 변경되었습니다.');
+          // ! (잔여좌석 초과 시. 리스트에서 해당 영화의 남은 좌석수를 찾아서 담아준다.)
+          // 조건에 맞는 첫번째 데이터를 찾아줌
+          var leftSeats = movies.firstWhere(
+            (item) => item['id'] == cartList[index]['id'],
+          );
+
+          if (newCount > leftSeats['availableSeats']) {
+            print(
+              '남은 잔여 좌석 수: ${leftSeats['availableSeats']} 보다 예매요청 수량이 더 많습니다.\n다시 입력해주세요.',
+            );
+          } else {
+            // 1 이상이면 새로운 항목 추가해주기
+            cartList[index]['count'] = newCount;
+            print('수량이 변경되었습니다.');
+          }
         }
       }
-
-      // 단, 남은 좌석 초과 금지
     } else if (input == 'n') {
       print('수량변경을 취소합니다.');
       return;
@@ -243,11 +257,21 @@ void processPayment(
   if (confirm == 'y') {
     // movies의 availableSeats를 cartList 수량만큼 차감
     // movies에서 리스트안의 항목을 가져온 다음, 카트리스트의 아이템 만큼 차감을 해야됨
-    for (var movie in movies) {
-      for (var item in cartList) {
+
+    // ! (이 코드는 모든 영화에서 카트에 있는 모든 수량을 다 빼버림)
+    // for (var movie in movies) {
+    //   for (var item in cartList) {
+    //     movie['availableSeats'] -= item['count'];
+    //   }
+    // }
+
+    // 카트에 있는 항목만 하나씩 꺼내서 그 항목과 id가 같은 영화만 찾아서 빼야됨
+    for (var item in cartList) {
+      for (var movie in movies) {
         movie['availableSeats'] -= item['count'];
       }
     }
+
     // 결제 완료 메시지 출력
     print('영화예매 결제가 완료 되었습니다.');
     cartList.clear();
