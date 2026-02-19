@@ -150,7 +150,7 @@ void addToCart(
       'count': ticketCount,
     });
   }
-  print('${selectMovie['tilte']} $ticketCount매를 담았습니다.');
+  print('${selectMovie['title']} $ticketCount매를 담았습니다.');
 }
 
 // 예매 목록 보기 및 수정/취소
@@ -225,7 +225,7 @@ void processPayment(
     var item = cartList[i];
     total += (item['price'] as int) * (item['count'] as int);
   }
-  print('총 금액: $total원 입니다.');
+  print('총 결제 금액: $total원 입니다.');
 
   // 할인 정책 적용
   // 50000원 이상 → 10% | 30000원 이상 → 5% | 그 외 → 할인 없음 | 할인 후 최종 금액 출력
@@ -235,7 +235,7 @@ void processPayment(
     total = (total * 0.95).toInt();
   }
   print('50000원 이상 → 10% | 30000원 이상 → 5% | 그 외 → 할인 없음');
-  print('할인 시 총 금액: $total원 입니다.');
+  print('할인 시 총 결제 금액: $total원 입니다.');
 
   stdout.write('결제하시겠습니까? (y/n): ');
   String confirm = stdin.readLineSync()?.toLowerCase() ?? '';
