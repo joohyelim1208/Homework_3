@@ -260,6 +260,8 @@ void processPayment(
       var subtractSeats = movies.firstWhere(
         (movie) => movie['id'] == item['id'],
       );
+
+      // final price = int.tryParse().toString(); 인트타입이 확실하지 않다면 이렇게 해줘도 된다!
       // 찾은 원본 영화의 좌석을 차감 한다. 다이나믹 타입이어서 인트로 확정 지어줘야 에러가 나지 않음..
       subtractSeats['availableSeats'] =
           (subtractSeats['availableSeats'] as int) - (item['count'] as int);
