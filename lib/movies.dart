@@ -184,7 +184,7 @@ void showCart(
       int itemNumber = readIntInput('변경할 항목 번호를 입력하세요');
       // 인덱스번호로 바꾸기
       int index = itemNumber - 1;
-
+      print(index);
       // itemNumber가 범위 안에 있는지 확인
       if (index >= 0 && index < cartList.length) {
         int newCount = readIntInput('새로운 수량 입력 (0 입력 시 삭제)');
@@ -256,16 +256,7 @@ void processPayment(
 
   if (confirm == 'y') {
     // movies의 availableSeats를 cartList 수량만큼 차감
-    // movies에서 리스트안의 항목을 가져온 다음, 카트리스트의 아이템 만큼 차감을 해야됨
-
-    // ! (이 코드는 모든 영화에서 카트에 있는 모든 수량을 다 빼버림)
-    // for (var movie in movies) {
-    //   for (var item in cartList) {
-    //     movie['availableSeats'] -= item['count'];
-    //   }
-    // }
-
-    // 카트에 있는 항목만 하나씩 꺼내서 그 항목과 id가 같은 영화만 찾아서 빼야됨
+    // 카트에 있는 항목만 하나씩 꺼내서 그 항목과 id가 같은 영화만 찾아서 빼야됨(여기서 전체 항목이 삭제되는 문제 발생)
     for (var item in cartList) {
       for (var movie in movies) {
         movie['availableSeats'] -= item['count'];
